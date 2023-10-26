@@ -29,7 +29,7 @@ static void build_path_to_destination(t_parent *parents[], t_source *path_tree, 
             // Resize the stack if necessary.
             if (top == stack_size - 1) {
                 stack_size *= 2;
-                stack = (t_parent **)realloc(stack, sizeof(t_parent *) * stack_size);
+                stack = (t_parent **)mx_realloc(stack, sizeof(t_parent *) * stack_size);
             }
         }
     }
