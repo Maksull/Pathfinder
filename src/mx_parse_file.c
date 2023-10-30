@@ -158,7 +158,7 @@ char **mx_parse_file(char *src, t_graph **graph) {
 
     // Check and validate the number of islands in the first line of the input.
     if (lines[0] == NULL || !is_number_valid(lines[0]) || mx_atoi(lines[0]) <= 0) {
-        mx_error_invalid_num_of_islands();
+        mx_error_line_not_valid(1);
     }
 
     // Extract the number of islands from the first line.
@@ -187,6 +187,11 @@ char **mx_parse_file(char *src, t_graph **graph) {
         check_new_island(islands, num_of_islands, &islands_counter, parsed_bridges[i - 1].island2);
     }
 
+    // Check that the number of unique islands matches the expected number.
+    if (islands_counter != num_of_islands) {
+        mx_error_invalid_num_of_islands();
+    }
+
     // Build a graph using the extracted data.
     build_graph(graph, parsed_bridges, num_of_bridges, islands, num_of_islands);
 
@@ -197,11 +202,6 @@ char **mx_parse_file(char *src, t_graph **graph) {
         if (sum_bridges_len > __INT_MAX__) {
             mx_error_sum_of_bridges_len_is_too_big();
         }
-    }
-
-    // Check that the number of unique islands matches the expected number.
-    if (islands_counter != num_of_islands) {
-        mx_error_invalid_num_of_islands();
     }
 
     // Free memory used by the lines array.

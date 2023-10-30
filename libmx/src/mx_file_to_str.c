@@ -18,10 +18,6 @@ char *mx_file_to_str(const char *file)
     close(f);
 
     f = open(file, O_RDONLY);
-    if(!len)
-    {
-        return NULL;
-    }
 
     char *result = mx_strnew(len);
     read(f, result, len);
