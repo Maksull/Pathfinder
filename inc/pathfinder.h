@@ -95,6 +95,7 @@ void mx_del_node(t_node **node);
 int mx_list_of_node_size(t_node *list);
 void mx_copy_list_of_node(t_node **dest, t_node *src);
 void mx_push_front_node(t_node **list, int index, char *name, int weight);
+void mx_pop_front_node(t_node **head);
 
 // Dijkstra's Algorithm
 t_source *mx_create_path_tree(int size, char **islands_names, int src_index);
@@ -127,3 +128,4 @@ void mx_push_back_parent(t_parent **list, int prev_vert_index, int index, char *
 void mx_push_front_parent(t_parent **list, int prev_vert_index, int index, char *name, int weight);
 void mx_pop_back_parent(t_parent **head);
 bool mx_check_parent_dup(t_parent *list, int prev_vert_index, int index, char *name, int weight);
+void mx_clear_parents(t_parent **arr, int size);

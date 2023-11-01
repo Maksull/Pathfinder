@@ -1,65 +1,102 @@
 #include "../inc/pathfinder.h"
 
-// Comparator function to compare two vertices based on their indices.
-static bool compare(t_node *vertex1, t_node *vertex2) {
-    return vertex1->index > vertex2->index;
+// Function to calculate the size of the list of paths.
+int list_of_paths_size(t_path *list) {
+    int size = 0;
+    t_path *current = list;
+    while (current != NULL) {
+        size++;
+        current = current->next;
+    }
+    return size;
 }
 
-// Merge two sorted path lists into a single sorted list.
-static t_path* merge_paths(t_path *left, t_path *right) {
-    t_path dummy;
-    t_path *tail = &dummy;
-    dummy.next = NULL;
+// Add a path to the end of the list
+void mx_push_back_path(t_path **list, int weight) {
+    t_path *new_path = mx_create_path(weight);
+    if (*list == NULL) {
+        *list = new_path;
+    } else {
+        t_path *current = *list;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = new_path;
+    }
+}
 
-    // Merge the two sorted path lists.
+// Compare two paths and return true if the first path is greater
+bool compare_paths(t_node *list1, t_node *list2) {
+    bool is_greater = false;
+    while (list1 != NULL && list2 != NULL) {
+        if (list2->index > list1->index) {
+            is_greater = true;
+        }
+        if (list1->index > list2->index && !is_greater) {
+            return true;
+        }
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+    return false;
+}
+
+static t_path *merge(t_path *left, t_path *right) {
+    t_path *result = NULL;
+
     while (left && right) {
-        if (compare(left->list, right->list)) {
-            tail->next = left;
+        if (compare_paths(left->list, right->list)) {
+            mx_push_front_path(&result, left->weight);
             left = left->next;
         } else {
-            tail->next = right;
+            mx_push_front_path(&result, right->weight);
             right = right->next;
         }
-        tail = tail->next;
     }
 
-    // Attach any remaining elements to the merged list.
-    tail->next = (left != NULL) ? left : right;
-
-    return dummy.next;
-}
-
-// Split a path list into two halves.
-static void split_path_list(t_path *head, t_path **left, t_path **right) {
-    t_path *slow = head;
-    t_path *fast = head->next;
-
-    // Use the slow and fast pointer technique to split the list into two halves.
-    while (fast) {
-        fast = fast->next;
-        if (fast) {
-            slow = slow->next;
-            fast = fast->next;
-        }
+    while (left) {
+        mx_push_front_path(&result, left->weight);
+        left = left->next;
     }
 
-    *left = head;
-    *right = slow->next;
-    slow->next = NULL;
+    while (right) {
+        mx_push_front_path(&result, right->weight);
+        right = right->next;
+    }
+
+    return result;
 }
 
-// Sort a list of paths using merge sort.
+static t_path *merge_sort(t_path *list) {
+    if (!list || !list->next) {
+        return list;
+    }
+
+    t_path *left = NULL;
+    t_path *right = NULL;
+    t_path *current = list;
+    int size = list_of_paths_size(list) / 2;
+
+    for (int i = 0; i < size; i++) {
+        mx_push_back_path(&left, current->weight);
+        current = current->next;
+    }
+
+    while (current) {
+        mx_push_back_path(&right, current->weight);
+        current = current->next;
+    }
+
+    left = merge_sort(left);
+    right = merge_sort(right);
+
+    return merge(left, right);
+}
+
 t_path *mx_sort_paths_list(t_path *list) {
-    if (list == NULL || list->next == NULL) {
-        return list; // Base case: If the list is empty or has one element, it's already sorted.
+    if (!list) {
+        return NULL;
     }
 
-    t_path *left;
-    t_path *right;
-    split_path_list(list, &left, &right); // Split the list into two halves.
-
-    left = mx_sort_paths_list(left); // Recursively sort the left half.
-    right = mx_sort_paths_list(right); // Recursively sort the right half.
-
-    return merge_paths(left, right); // Merge the two sorted halves into a single sorted list.
+    return merge_sort(list);
 }
