@@ -50,19 +50,19 @@ typedef struct s_parent {
     struct s_parent *next;  // Pointer to the next parent node.
 } t_parent;
 
-// Define a structure for the priority queue.
+// Represents a priority queue data structure for Dijkstra's algorithm.
 typedef struct s_priority_queue {
-    int *indices; // Array to store vertex indices.
-    int *weights; // Array to store weights.
-    int size;
-    int capacity;
+    int *indices;       // Array to store vertex indices.
+    int *weights;       // Array to store weights (used for priority).
+    int size;           // Current number of elements in the queue.
+    int capacity;       // Maximum capacity of the queue.
 } t_priority_queue;
 
-// Define a structure to hold parsed bridge information
+// Represents parsed information about a bridge between two islands.
 typedef struct s_parsed_bridge {
-    char *island1;
-    char *island2;
-    int bridge_len;
+    char *island1;      // Name of the first island connected by the bridge.
+    char *island2;      // Name of the second island connected by the bridge.
+    int bridge_len;     // Length or distance of the bridge.
 } t_parsed_bridge;
 
 // Function Declarations
